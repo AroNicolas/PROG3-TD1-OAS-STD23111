@@ -1,0 +1,185 @@
+openapi: 3.0.3
+info:
+  title: Student Management API
+  description: API for managing groups and students in a school system.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /groups:
+    get:
+      summary: List of groups
+      description: Retrieves a list of groups with optional filtering by `groupName` and `schoolYear`.
+      parameters:
+        - name: groupName
+          in: query
+          description: Filter groups by name.
+          required: false
+          schema:
+            type: string
+        - name: schoolYear
+          in: query
+          description: Filter groups by school year.
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of groups.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Group"
+    post:
+      summary: Create a new group
+      description: Adds a new group to the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Group"
+      responses:
+        "201":
+          description: The group was successfully created.
+    put:
+      summary: Update a group
+      description: Updates the details of an existing group. This is an idempotent request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Group"
+      responses:
+        "200":
+          description: The group was successfully updated.
+    delete:
+      summary: Delete a group
+      description: Deletes a group by ID.
+      parameters:
+        - name: id
+          in: query
+          description: The ID of the group to delete.
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: The group was successfully deleted.
+
+  /students:
+    get:
+      summary: List of students
+      description: Retrieves a list of students with optional filtering by `name`.
+      parameters:
+        - name: name
+          in: query
+          description: Filter students by name.
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of students.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
+    post:
+      summary: Create a new student
+      description: Adds a new student to the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Student"
+      responses:
+        "201":
+          description: The student was successfully created.
+    put:
+      summary: Update a student
+      description: Updates the details of an existing student. This is an idempotent request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Student"
+      responses:
+        "200":
+          description: The student was successfully updated.
+    delete:
+      summary: Delete a student
+      description: Deletes a student by ID.
+      parameters:
+        - name: id
+          in: query
+          description: The ID of the student to delete.
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: The student was successfully deleted.
+
+components:
+  schemas:
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the group.
+        groupName:
+          type: string
+          description: The name of the group.
+        schoolYear:
+          type: string
+          description: The academic year of the group.
+        promotion:
+          type: string
+          description: The promotion of the group.
+          enum:
+            - G
+            - H
+            - J
+            - K
+        studentNumbers:
+          type: integer
+          description: The number of students in the group.
+        students:
+          type: array
+          description: List of students in the group.
+          items:
+            $ref: "#/components/schemas/Student"
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the student.
+        name:
+          type: string
+          description: The name of the student.
+        sex:
+          type: string
+          description: The gender of the student.
+          enum:
+            - M
+            - F
+        birthdate:
+          type: string
+          format: date
+          description: The birthdate of the student.
+        reference:
+          type: string
+          description: The unique reference for the student (STDxxxx where xxxx are numbers).
+        group:
+          type: string
+          description: The group ID to which the student belongs.
